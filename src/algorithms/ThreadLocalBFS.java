@@ -2,18 +2,18 @@ package algorithms;
 
 import components.Node;
 import components.Traversable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //-->>> DONE <<<--
 
 /**
  * A class that implements the bfs algorithm to find all shortest paths of a graph.
- *
- * @param <T>
  */
 public class ThreadLocalBFS<T> {
     //Using threadLocal so each client that requests the use of BFS class, will have his own values
@@ -29,12 +29,16 @@ public class ThreadLocalBFS<T> {
      * @param destination The destination node
      * @return List of lists of all shortest paths.
      */
-    public List<List<Node<T>>> getShortestPaths(Traversable<T> graph, Node<T> source, Node<T> destination) {
-        int shortestPathLength = Integer.MAX_VALUE;
-
+    public List<List<Node<T>>> getShortestPaths(@NotNull Traversable<T> graph, Node<T> source, Node<T> destination) {
         //creating list of lists in case there multiple short path (with the same length)
         List<List<Node<T>>> allShortestPaths = new ArrayList<>();
+
+        //if at least one of the nodes has value of 0, there's no valid path
+        if (graph.getValue(source) == 0 || graph.getValue(destination) == 0)
+            return allShortestPaths;
+
         LinkedList<Node<T>> currentPath = new LinkedList<>();
+        AtomicInteger shortestPathLength = new AtomicInteger(Integer.MAX_VALUE);
 
         //source node is added as the head of the linked list.
         currentPath.add(source);
@@ -53,11 +57,11 @@ public class ThreadLocalBFS<T> {
             We can break the loop & return the lists of the shortest paths
              */
             if (lastNode.equals(destination)) {
-                if (shortestPathLength < currentPath.size())
+                if (shortestPathLength.get() < currentPath.size())
                     break;
                 else {
                     //setting a new shortest length
-                    shortestPathLength = currentPath.size();
+                    shortestPathLength.set(currentPath.size());
                     allShortestPaths.add(currentPath);
                 }
             }

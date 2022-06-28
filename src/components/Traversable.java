@@ -2,6 +2,9 @@ package components;
 
 import java.util.Collection;
 
+/**
+ * This interface gives a matrix the abilities of a graph
+ */
 public interface Traversable<T> {
     Node<T> getRoot();
 

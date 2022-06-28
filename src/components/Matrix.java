@@ -27,7 +27,6 @@ public class Matrix implements Serializable {
         return baseMatrix;
     }
 
-
     public int getValue(@NotNull Index index) {
         return this.baseMatrix[index.getRow()][index.getColumn()];
     }
@@ -122,10 +121,10 @@ public class Matrix implements Serializable {
      * A function that iterating over a matrix and adds an index object<br>
      * to a list if the value in that index is 1.
      *
-     * @return HashSet of indices with value = 1
+     * @return List of indices with value = 1
      */
-    public HashSet<Index> getIndicesOfOnes() {
-        HashSet<Index> onesList = new HashSet<>();
+    public List<Index> getIndicesOfOnes() {
+        List<Index> onesList = new ArrayList<>();
 
         for (int i = 0; i < baseMatrix.length; i++) {
             for (int j = 0; j < baseMatrix.length; j++) {
@@ -152,12 +151,3 @@ public class Matrix implements Serializable {
         return sb.toString();
     }
 }
-
-
-
-
-
-
-
-
-

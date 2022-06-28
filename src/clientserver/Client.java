@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -68,7 +68,7 @@ public class Client {
      * @param indexType A string to let user know what is the index meant for.
      * @return {@link Index} object with the user inputs.
      */
-    private static Index createIndex(Matrix matrix, String indexType) {
+    private static Index createIndex(@NotNull Matrix matrix, String indexType) {
         System.out.println("Enter row and column values for " + indexType + ":");
         System.out.print("Row: ");
         int row = in.nextInt();
@@ -94,22 +94,88 @@ public class Client {
             //output stream should be declared before input stream
             ObjectOutputStream toServer = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream fromServer = new ObjectInputStream(socket.getInputStream());
-            /*
-            ToDo -> create some matrices here
-             */
+
+            //inputs for Task 1 - Connected components
             int[][] input1 = {
                     {1, 0, 0},
+                    {1, 0, 1},
+                    {0, 1, 1}
+
+/*                    {1, 0, 0, 0, 1},
+                    {0, 0, 1, 0, 0},
+                    {0, 0, 1, 0, 0},
+                    {0, 0, 1, 0, 1},
+                    {0, 0, 1, 0, 1},*/
+
+/*                    {1, 0, 0, 1, 1, 0, 1, 0, 1, 0},
+                    {0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
+                    {0, 0, 0, 0, 0, 1, 0, 0, 1, 0},
+                    {0, 0, 1, 0, 1, 1, 0, 0, 0, 0},
+                    {0, 1, 1, 0, 0, 1, 0, 0, 0, 1},
+                    {1, 0, 1, 0, 0, 1, 0, 0, 0, 0},
+                    {0, 0, 1, 0, 0, 1, 0, 0, 1, 0},
+                    {0, 0, 1, 0, 0, 1, 0, 0, 0, 0},
+                    {1, 0, 1, 0, 0, 1, 0, 1, 1, 1},
+                    {1, 0, 1, 0, 0, 1, 0, 0, 1, 1}*/};
+
+            //inputs for Task 2 - The Shortest paths
+            int[][] input2 = {
+/*                    {1, 0, 0},
                     {1, 1, 0},
-                    {1, 1, 0}
+                    {1, 1, 0}*/
+
+/*                    {1, 0, 0, 0, 0},
+                    {0, 1, 1, 0, 0},
+                    {0, 1, 1, 0, 0},
+                    {0, 0, 1, 0, 0},
+                    {0, 0, 1, 0, 0}*/
+
+                    {1, 0, 1, 1, 1, 1, 0, 0, 0, 0},
+                    {0, 1, 1, 1, 1, 1, 0, 0, 0, 0},
+                    {0, 1, 1, 1, 0, 1, 0, 0, 0, 0},
+                    {0, 0, 1, 0, 1, 1, 0, 1, 0, 0},
+                    {0, 1, 1, 0, 0, 1, 0, 0, 0, 0},
+                    {1, 0, 1, 0, 0, 1, 0, 0, 0, 0},
+                    {0, 0, 1, 0, 0, 1, 0, 0, 1, 0},
+                    {0, 0, 1, 0, 0, 1, 1, 0, 0, 0},
+                    {0, 0, 1, 0, 0, 1, 0, 1, 1, 1},
+                    {1, 0, 1, 0, 0, 1, 0, 0, 1, 1}};
+
+            //inputs for Task 3 - Submarines
+            int[][] input3 = {
+                    //Invalid input
+                    {1, 1, 0, 1, 1},
+                    {1, 0, 0, 1, 1},
+                    {1, 0, 0, 1, 1}
+
+/*
+                    //Invalid input
+                    {1,0,0,1,1},
+                    {1,0,0,1,1},
+                    {0,1,0,1,1}
+*/
+                    /*
+                    //Valid input
+                    {1,0,0,1,1},
+                    {1,0,0,1,1},
+                    {1,0,0,1,1}
+                     */
+
+                    /*
+                    //Valid input
+                    {1, 1, 0, 1, 1},
+                    {0, 0, 0, 1, 1},
+                    {1, 1, 0, 1, 1}
+                     */
             };
 
-            int[][] input2 = {
-                    {1, 0, 0},
-                    {1, 1, 0},
-                    {1, 1, 0}
-            };
+            //input for Task 4 - The Lightest paths
+            int[][] input4 = {
+                    {100, 100, 100},
+                    {500, 900, 300}};
 
             boolean clientsConnection = true;
+
             //while clients connected and sending requests to the server
             while (clientsConnection) {
                 String clientRequest = menu();
@@ -119,7 +185,7 @@ public class Client {
                     case "all reachable nodes" -> {
                         toServer.writeObject(clientRequest);
                         toServer.writeObject(input1);
-                        LinkedHashSet<List<Node<Index>>> allReachableNodes = new LinkedHashSet<>((List<List<Node<Index>>>) fromServer.readObject());
+                        List<HashSet<Node<Index>>> allReachableNodes = new ArrayList<>((List<HashSet<Node<Index>>>) fromServer.readObject());
                         System.out.println("All Reachable Nodes:");
                         allReachableNodes.forEach(System.out::println);
                     }
@@ -132,8 +198,12 @@ public class Client {
                         toServer.writeObject(source);
                         toServer.writeObject(destination);
                         List<List<Index>> shortestPaths = new ArrayList<>((List<List<Index>>) fromServer.readObject());
-                        System.out.println("All Shortest path from " + source + " to " + destination + ":");
-                        shortestPaths.forEach(System.out::println);
+
+                        if (!shortestPaths.isEmpty()) {
+                            System.out.println("All Shortest path from " + source + " to " + destination + ":");
+                            shortestPaths.forEach(System.out::println);
+                        } else //if there's no valid path from source to destination
+                            System.out.println("There is no path from " + source + " to " + destination);
                     }
                     case "find submarines" -> {
 
