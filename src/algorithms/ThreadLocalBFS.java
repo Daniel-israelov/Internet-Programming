@@ -4,10 +4,7 @@ import components.Node;
 import components.Traversable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //-->>> DONE <<<--
@@ -42,6 +39,10 @@ public class ThreadLocalBFS<T> {
 
         //source node is added as the head of the linked list.
         currentPath.add(source);
+
+        if (source.equals(destination))
+            return Collections.singletonList(currentPath);
+
         localQueue.get().add(currentPath);
 
         while (!localQueue.get().isEmpty()) {
@@ -65,7 +66,6 @@ public class ThreadLocalBFS<T> {
                     allShortestPaths.add(currentPath);
                 }
             }
-
             Collection<Node<T>> reachableNodes = graph.getReachableNodes(lastNode);
 
             //iterating over the neighbors of the current node to find next step (node) options.
