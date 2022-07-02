@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * The class represents a DFS algorithm to traverse over a graph.
  */
-public class ThreadLocalDFS<T> implements Serializable {
+public class ThreadedDFS<T> implements Serializable {
     private final ThreadLocal<Stack<Node<T>>> localStack = ThreadLocal.withInitial((Stack::new));
     //LinkedHashSet keeps the insertion order
     private final ThreadLocal<Set<Node<T>>> localSet = ThreadLocal.withInitial((LinkedHashSet::new));
@@ -116,7 +116,7 @@ public class ThreadLocalDFS<T> implements Serializable {
     public List<HashSet<Index>> stronglyConnectedComponents(@NotNull Matrix matrix) {
         List<Index> indicesOfOnes = matrix.getIndicesOfOnes();
         TraversableMatrix traversableMatrix = new TraversableMatrix(matrix);
-        ThreadLocalDFS<Index> dfs = new ThreadLocalDFS<>();
+        ThreadedDFS<Index> dfs = new ThreadedDFS<>();
         HashSet<HashSet<Index>> allConnectedComponents = dfs.parallelTraverse(traversableMatrix, indicesOfOnes);
 
         //returning a size-wise sorted set of connected components

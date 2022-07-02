@@ -1,7 +1,8 @@
 package clientserver;
 
-import algorithms.ThreadLocalBFS;
-import algorithms.ThreadLocalDFS;
+import algorithms.SubmarineValidator;
+import algorithms.ThreadedBFS;
+import algorithms.ThreadedDFS;
 import components.Index;
 import components.Matrix;
 import components.Node;
@@ -46,7 +47,7 @@ public class MatrixHandler implements IHandler {
                     case "all reachable nodes" -> {
                         this.matrix = new Matrix((int[][]) clientInputStream.readObject());
 
-                        List<HashSet<Index>> allStronglyConnectedComponents = new ThreadLocalDFS<Index>().stronglyConnectedComponents(this.matrix);
+                        List<HashSet<Index>> allStronglyConnectedComponents = new ThreadedDFS<Index>().stronglyConnectedComponents(this.matrix);
                         clientOutputStream.writeObject(allStronglyConnectedComponents);
                     }
                     case "shortest path" -> {
@@ -57,14 +58,17 @@ public class MatrixHandler implements IHandler {
                         graph.setSource(this.source);
                         graph.setDestination(this.destination);
 
-                        ThreadLocalBFS<Index> bfs = new ThreadLocalBFS<>();
+                        ThreadedBFS<Index> bfs = new ThreadedBFS<>();
                         List<List<Node<Index>>> shortestPaths = bfs.getShortestPaths(graph, graph.getSourceNode(), graph.getDestinationNode());
                         clientOutputStream.writeObject(shortestPaths);
                     }
                     case "find submarines" -> {
-                        this.matrix = new Matrix((int[][]) clientInputStream.readObject());
-
-
+                        int[][] baseMatrix = (int[][]) clientInputStream.readObject();
+                        this.matrix = new Matrix(baseMatrix);
+                        ThreadedDFS<Index> dfs = new ThreadedDFS<>();
+                        List<HashSet<Index>> allConnectedComponents = dfs.stronglyConnectedComponents(this.matrix);
+                        int submarinesCount = new SubmarineValidator().findSubmarinesAmount(allConnectedComponents, baseMatrix);
+                        clientOutputStream.writeObject(submarinesCount);
                     }
                     case "shortest path weighted graph" -> {
                         this.matrix = new Matrix((int[][]) clientInputStream.readObject());

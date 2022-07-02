@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A class that implements the bfs algorithm to find all shortest paths of a graph.
  */
-public class ThreadLocalBFS<T> {
+public class ThreadedBFS<T> {
     //Using threadLocal so each client that requests the use of BFS class, will have his own values
     //corresponding to his thread
     private final ThreadLocal<LinkedList<LinkedList<Node<T>>>> localQueue = ThreadLocal.withInitial(LinkedList::new);

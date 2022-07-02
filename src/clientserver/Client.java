@@ -143,30 +143,33 @@ public class Client {
 
             //inputs for Task 3 - Submarines
             int[][] input3 = {
-                    //Invalid input
-                    {1, 1, 0, 1, 1},
+                    //1 sub
+/*                    {1, 1, 0, 1, 1},
                     {1, 0, 0, 1, 1},
-                    {1, 0, 0, 1, 1}
+                    {1, 0, 0, 1, 1}*/
 
 /*
-                    //Invalid input
+                    //1 sub
                     {1,0,0,1,1},
                     {1,0,0,1,1},
                     {0,1,0,1,1}
 */
-                    /*
-                    //Valid input
-                    {1,0,0,1,1},
-                    {1,0,0,1,1},
-                    {1,0,0,1,1}
-                     */
+                    //2 subs
+/*                    {1, 0, 1, 1},
+                    {1, 0, 1, 1},
+                    {1, 0, 1, 1}*/
 
-                    /*
-                    //Valid input
+                    //3 subs
+/*                    {1, 1, 0, 1, 1},
+                    {0, 0, 0, 1, 1},
+                    {1, 1, 0, 1, 1},
+                    {1, 1, 0, 1, 1}*/
+
+                    //3 subs
                     {1, 1, 0, 1, 1},
                     {0, 0, 0, 1, 1},
-                    {1, 1, 0, 1, 1}
-                     */
+                    {1, 1, 0, 0, 0},
+                    {1, 1, 0, 0, 0}
             };
 
             //input for Task 4 - The Lightest paths
@@ -206,7 +209,10 @@ public class Client {
                             System.out.println("There is no path from " + source + " to " + destination);
                     }
                     case "find submarines" -> {
-
+                        toServer.writeObject("find submarines");
+                        toServer.writeObject(input3);
+                        int submarinesCount = (int) fromServer.readObject();
+                        System.out.println("Valid submarines count is: " + submarinesCount);
                     }
                     case "shortest path weighted graph" -> {
 
