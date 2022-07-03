@@ -46,7 +46,6 @@ public class MatrixHandler implements IHandler {
                 switch (clientInputStream.readObject().toString()) {
                     case "all reachable nodes" -> {
                         this.matrix = new Matrix((int[][]) clientInputStream.readObject());
-
                         List<HashSet<Index>> allStronglyConnectedComponents = new ThreadedDFS<Index>().stronglyConnectedComponents(this.matrix);
                         clientOutputStream.writeObject(allStronglyConnectedComponents);
                     }
