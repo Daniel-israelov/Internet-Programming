@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
-// -->>> DONE <<<--
-
 /**
  * This class represents a Node in a Graph.
  */

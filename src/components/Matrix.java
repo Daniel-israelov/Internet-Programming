@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.*;
 
-//-->>> DONE <<<--
-
 /**
  * Base class for all matrices types.<br>
  * It creates a 2D NxN matrix, or NxM matrices.
@@ -138,6 +136,7 @@ public class Matrix implements Serializable {
     public void printMatrix() {
         for (int[] row : baseMatrix)
             System.out.println(Arrays.toString(row));
+        System.out.println();
     }
 
     @Override

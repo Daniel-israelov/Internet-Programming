@@ -9,13 +9,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Client {
     static Scanner in = new Scanner(System.in);
+
+    public static void printMatrix(int[][] matrix) {
+        System.out.println("Current Matrix:");
+
+        for (int[] row : matrix)
+            System.out.println(Arrays.toString(row));
+        System.out.println();
+    }
 
     private static @NotNull String menu() {
         System.out.println("\nSelect option from the following:");
@@ -174,8 +179,16 @@ public class Client {
 
             //input for Task 4 - The Lightest paths
             int[][] input4 = {
+                    //(0,0) --> (2,2) = (0,0) (0,1) (1,2) (2,2)
+                    //(2,0) --> (0,2) = (2,0) (2,1) (1,2) (0,2)
                     {100, 100, 100},
-                    {500, 900, 300}};
+                    {500, 900, 300},
+                    {400, 150, 200}
+
+/*                    {100,100,100},
+                    {100,100,100},
+                    {100,100,100}*/
+            };
 
             boolean clientsConnection = true;
 
@@ -188,22 +201,33 @@ public class Client {
                     case "all reachable nodes" -> {
                         toServer.writeObject(clientRequest);
                         toServer.writeObject(input1);
+
                         List<HashSet<Node<Index>>> allReachableNodes = new ArrayList<>((List<HashSet<Node<Index>>>) fromServer.readObject());
-                        System.out.println("All Reachable Nodes:");
-                        allReachableNodes.forEach(System.out::println);
+                        printMatrix(input1);
+
+                        if (!allReachableNodes.isEmpty()) {
+                            System.out.println("All Reachable Nodes:");
+                            allReachableNodes.forEach(System.out::println);
+                        } else
+                            System.out.println("There are no reachable nodes in this Matrix.");
                     }
                     case "shortest path" -> {
                         toServer.writeObject("shortest path");
                         toServer.writeObject(input2);
                         Matrix matrix = new Matrix(input2);
+
                         Index source = createIndex(matrix, "Source");
                         Index destination = createIndex(matrix, "Destination");
                         toServer.writeObject(source);
                         toServer.writeObject(destination);
+
+                        System.out.println("Current Matrix:");
+                        matrix.printMatrix();
+
                         List<List<Index>> shortestPaths = new ArrayList<>((List<List<Index>>) fromServer.readObject());
 
                         if (!shortestPaths.isEmpty()) {
-                            System.out.println("All Shortest path from " + source + " to " + destination + ":");
+                            System.out.println("\nAll Shortest path from " + source + " to " + destination + ":");
                             shortestPaths.forEach(System.out::println);
                         } else //if there's no valid path from source to destination
                             System.out.println("There is no path from " + source + " to " + destination);
@@ -211,11 +235,33 @@ public class Client {
                     case "find submarines" -> {
                         toServer.writeObject("find submarines");
                         toServer.writeObject(input3);
+
+                        System.out.println("Current Matrix:");
+                        printMatrix(input3);
+
                         int submarinesCount = (int) fromServer.readObject();
                         System.out.println("Valid submarines count is: " + submarinesCount);
                     }
                     case "shortest path weighted graph" -> {
+                        toServer.writeObject("shortest path weighted graph");
+                        toServer.writeObject(input4);
 
+                        Matrix matrix = new Matrix(input4);
+                        Index source = createIndex(matrix, "Source");
+                        Index destination = createIndex(matrix, "Destination");
+
+                        System.out.println("Current Matrix:");
+                        matrix.printMatrix();
+
+                        toServer.writeObject(source);
+                        toServer.writeObject(destination);
+                        LinkedList<List<Index>> lightestPaths = new LinkedList<>((LinkedList<List<Index>>) fromServer.readObject());
+
+                        if (!lightestPaths.isEmpty()) {
+                            System.out.println("All Lightest paths from " + source + " to " + destination + ":");
+                            lightestPaths.forEach(System.out::println);
+                        } else
+                            System.out.println("There is no path from " + source + " to " + destination);
                     }
                     case "stop" -> {
                         clientsConnection = false;
@@ -227,7 +273,6 @@ public class Client {
                     case "invalid" -> System.out.println("Invalid choice, please try again.\n");
                 }
             }
-
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

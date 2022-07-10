@@ -3,6 +3,7 @@ package clientserver;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +13,6 @@ public class Server {
     //using 'volatile' keyword to ensure that updates to the variable propagate predictably to other threads.
     private volatile boolean activeServer;
     private ThreadPoolExecutor clientsPool;
-    private IHandler requestHandler;
 
     public Server(int port) throws IllegalArgumentException {
         if (!validatePort(port))
@@ -41,7 +41,6 @@ public class Server {
      * @param clientHandler The {@link IHandler} Interface
      */
     public void handleClients(IHandler clientHandler) {
-        this.requestHandler = clientHandler;
 
         new Thread(() -> {
             this.clientsPool = new ThreadPoolExecutor(10, 20, 500,
@@ -99,5 +98,14 @@ public class Server {
     public static void main(String[] args) {
         Server server = new Server(8010);
         server.handleClients(new MatrixHandler());
+
+        Scanner in = new Scanner(System.in);
+
+        System.out.println("Type 'stop' to shutdown the server.");
+
+        while (!in.next().equalsIgnoreCase("stop")) {
+            System.out.println("Invalid command, try again!");
+        }
+        server.closeServer();
     }
 }

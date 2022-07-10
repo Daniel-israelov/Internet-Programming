@@ -2,6 +2,7 @@ package clientserver;
 
 import algorithms.SubmarineValidator;
 import algorithms.ThreadedBFS;
+import algorithms.ThreadedBellmanFord;
 import algorithms.ThreadedDFS;
 import components.Index;
 import components.Matrix;
@@ -10,6 +11,7 @@ import components.TraversableMatrix;
 
 import java.io.*;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -53,6 +55,7 @@ public class MatrixHandler implements IHandler {
                         this.matrix = new Matrix((int[][]) clientInputStream.readObject());
                         this.source = (Index) clientInputStream.readObject();
                         this.destination = (Index) clientInputStream.readObject();
+
                         TraversableMatrix graph = new TraversableMatrix(this.matrix);
                         graph.setSource(this.source);
                         graph.setDestination(this.destination);
@@ -64,6 +67,7 @@ public class MatrixHandler implements IHandler {
                     case "find submarines" -> {
                         int[][] baseMatrix = (int[][]) clientInputStream.readObject();
                         this.matrix = new Matrix(baseMatrix);
+
                         ThreadedDFS<Index> dfs = new ThreadedDFS<>();
                         List<HashSet<Index>> allConnectedComponents = dfs.stronglyConnectedComponents(this.matrix);
                         int submarinesCount = new SubmarineValidator().findSubmarinesAmount(allConnectedComponents, baseMatrix);
@@ -73,14 +77,18 @@ public class MatrixHandler implements IHandler {
                         this.matrix = new Matrix((int[][]) clientInputStream.readObject());
                         this.source = (Index) clientInputStream.readObject();
                         this.destination = (Index) clientInputStream.readObject();
+
                         TraversableMatrix weightedGraph = new TraversableMatrix(this.matrix);
                         weightedGraph.setSource(this.source);
                         weightedGraph.setDestination(this.destination);
+
+                        ThreadedBellmanFord<Index> bellmanFord = new ThreadedBellmanFord<>();
+                        LinkedList<List<Node<Index>>> allLightestPaths = bellmanFord.getLightestPath(weightedGraph, weightedGraph.getSourceNode(), weightedGraph.getDestinationNode());
+                        clientOutputStream.writeObject(allLightestPaths);
                     }
                     case "stop" -> activeSession = false;
                 }
             }
-
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

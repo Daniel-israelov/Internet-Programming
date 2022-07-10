@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 
-// -->>> DONE <<<--
 /**
  * This class represents Index of a matrix.
  */

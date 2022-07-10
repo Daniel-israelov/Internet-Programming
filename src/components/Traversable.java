@@ -10,6 +10,8 @@ public interface Traversable<T> {
 
     Collection<Node<T>> getReachableNodes(Node<T> node);
 
+    Collection<Node<T>> getNeighbors(Node<T> node);
+
     void setSource(Index index);
 
     Index getSourceIndex();

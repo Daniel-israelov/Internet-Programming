@@ -9,8 +9,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-//-->>> DONE <<<--
-
 /**
  * The class represents a DFS algorithm to traverse over a graph.
  */

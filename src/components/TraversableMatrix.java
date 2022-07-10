@@ -114,6 +114,17 @@ public class TraversableMatrix implements Traversable<Index>, Serializable {
     }
 
     @Override
+    public Collection<Node<Index>> getNeighbors(@NotNull Node<Index> node) {
+        List<Node<Index>> neighbors = new ArrayList<>();
+
+        for (Index index : this.matrix.getNeighbors(node.getData())) {
+            Node<Index> indexNode = new Node<>(index, node);
+            neighbors.add(indexNode);
+        }
+        return neighbors;
+    }
+
+    @Override
     public String toString() {
         return "Source: " + source.toString() + "\n" +
                 "Matrix:\n" + matrix.toString();
