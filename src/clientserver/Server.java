@@ -8,6 +8,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class listens to client requests over a socket using a TPC connection<br>
+ * and uses the {@link IHandler} interface to execute the required task.
+ */
 public class Server {
     private final int port;
     //using 'volatile' keyword to ensure that updates to the variable propagate predictably to other threads.
