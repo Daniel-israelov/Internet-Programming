@@ -52,7 +52,7 @@ public class ThreadedBFS<T> {
             Node<T> lastNode = currentPath.getLast();
 
             /*
-            If the last node in the list is the same as the source node,
+            If the last node in the list is the same as destination node,
             We can break the loop & return the lists of the shortest paths
              */
             if (lastNode.equals(destination)) {
