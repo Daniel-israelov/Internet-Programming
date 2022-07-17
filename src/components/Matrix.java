@@ -3,7 +3,10 @@ package components;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Base class for all matrices types.<br>
@@ -25,6 +28,12 @@ public class Matrix implements Serializable {
         return baseMatrix;
     }
 
+    /**
+     * Returns the value of index (x,y)
+     *
+     * @param index The given {@link Index}
+     * @return Integer value of index (x,y)
+     */
     public int getValue(@NotNull Index index) {
         return this.baseMatrix[index.getRow()][index.getColumn()];
     }
@@ -131,12 +140,6 @@ public class Matrix implements Serializable {
             }
         }
         return onesList;
-    }
-
-    public void printMatrix() {
-        for (int[] row : baseMatrix)
-            System.out.println(Arrays.toString(row));
-        System.out.println();
     }
 
     @Override

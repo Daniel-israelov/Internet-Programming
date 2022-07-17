@@ -105,7 +105,7 @@ public class ThreadedBellmanFord<T> {
 
                     readWriteLock.writeLock().unlock();
 
-                    if (finalMinWeight.get() < currentMinWeight.get()) {
+                    if (finalMinWeight.get() > currentMinWeight.get()) {
                         //updating the target weight
                         finalMinWeight.set(currentWeight.get());
                     }

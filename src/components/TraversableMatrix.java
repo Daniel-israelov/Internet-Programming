@@ -80,7 +80,7 @@ public class TraversableMatrix implements Traversable<Index>, Serializable {
      * @param index The index to validate
      * @return true if index within matrix boundaries, false otherwise
      */
-    public boolean validateIndex(Index index) {
+    public boolean validateIndex(@NotNull Index index) {
         return (index.getRow() >= 0 && index.getRow() < matrix.getBaseMatrix().length) &&
                 (index.getColumn() >= 0 && index.getColumn() < matrix.getBaseMatrix()[0].length);
     }

@@ -185,6 +185,12 @@ public class Client {
                     {500, 900, 300},
                     {400, 150, 200}*/
 
+                    //(0,0) --> (2,1) = (0,0) (1,0) (2,1)
+                    //(3,0) --> (1,2) = (3,0) (2,1) (1,2)
+/*                    {25, 67, 55, 90},
+                    {17, 42, 39, 48},
+                    {15, 10, 5, 103},
+                    {2, 59, 86, 74}*/
 
 /*                    {100,100,100},
                     {100,100,100},
@@ -227,7 +233,7 @@ public class Client {
                         toServer.writeObject(destination);
 
                         System.out.println("Current Matrix:");
-                        matrix.printMatrix();
+                        System.out.println(matrix);
 
                         List<List<Index>> shortestPaths = new ArrayList<>((List<List<Index>>) fromServer.readObject());
 
@@ -255,8 +261,8 @@ public class Client {
                         Index source = createIndex(matrix, "Source");
                         Index destination = createIndex(matrix, "Destination");
 
-                        System.out.println("Current Matrix:");
-                        matrix.printMatrix();
+                        System.out.println("\nCurrent Matrix:");
+                        System.out.println(matrix);
 
                         toServer.writeObject(source);
                         toServer.writeObject(destination);
