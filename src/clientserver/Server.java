@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * This class listens to client requests over a socket using a TPC connection<br>
@@ -57,29 +55,43 @@ public class Server {
 
                 while (activeServer) {
                     //creating operational socket
-                    Socket serverToSpecificClient = serverSocket.accept();
-
-                    //This Runnable instance will be inserted to the clients pool
-                    Runnable singleClientHandling = () -> {
+                    FutureTask<Socket> socketFutureTask = new FutureTask<>(() -> {
                         try {
-                            clientHandler.handleClient(serverToSpecificClient.getInputStream(),
-                                    serverToSpecificClient.getOutputStream());
-
-                            serverToSpecificClient.getOutputStream().close();
-                            serverToSpecificClient.getInputStream().close();
-                            serverToSpecificClient.close(); //closing connection to a specific client
+                            Socket socket = serverSocket.accept();
+                            System.out.println("Server: Socket created on - " + Thread.currentThread().getName());
+                            return socket;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    };
-                    //executes the given task sometime in the future
-                    clientsPool.execute(singleClientHandling);
+                        return null;
+                    });
+                    clientsPool.execute(socketFutureTask);
+                    Socket serverToSpecificClient = socketFutureTask.get();
+
+                    // In case the Socket was successfully accepted - continue.
+                    if (socketFutureTask.isDone() && (serverToSpecificClient != null) ) {
+                        //This Runnable instance will be inserted to the clients pool
+                        Runnable singleClientHandling = () -> {
+                            try {
+                                clientHandler.handleClient(serverToSpecificClient.getInputStream(),
+                                        serverToSpecificClient.getOutputStream());
+
+                                serverToSpecificClient.getOutputStream().close();
+                                serverToSpecificClient.getInputStream().close();
+                                serverToSpecificClient.close(); //closing connection to a specific client
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        };
+                        //executes the given task sometime in the future
+                        clientsPool.execute(singleClientHandling);
+                    }
                 }
                 //Closing the server & stop listening for incoming connections from clients
                 serverSocket.close();
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         }).start();
     }
